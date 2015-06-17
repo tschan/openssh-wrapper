@@ -10,11 +10,11 @@ def read(fname):
 
 setup(
     name='openssh-wrapper',
-    version='0.5',
+    version='0.6',
     description='OpenSSH python wrapper',
     author='NetAngels team',
     author_email='info@netangels.ru',
-    url='https://github.com/NetAngels/openssh-wrapper',
+    url='https://github.com/tschan/openssh-wrapper',
     long_description = read('README.rst'),
     license = 'BSD License',
     py_modules=['openssh_wrapper'],
