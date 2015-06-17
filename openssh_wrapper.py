@@ -73,7 +73,8 @@ class SSHConnection(object):
     """
 
     def __init__(self, server, login=None, port=None, configfile=None,
-                 identity_file=None, ssh_agent_socket=None, timeout=60, debug=False):
+                 identity_file=None, ssh_agent_socket=None, timeout=60, debug=False,
+                 ssh_path='/usr/bin/ssh', scp_path='/usr/bin/scp'):
         """
         Create new object to establish SSH connection to remote servers
 
@@ -101,6 +102,8 @@ class SSHConnection(object):
         self.check_server(server)
         self.user = getpass.getuser()
         self.debug = debug
+        self.ssh_path = ssh_path
+        self.scp_path = scp_path
         if login:
             self.check_login(login)
             self.login = b(login)
@@ -335,7 +338,7 @@ class SSHConnection(object):
         Internal function
         """
         interpreter = b(interpreter)
-        cmd = ['/usr/bin/ssh', ]
+        cmd = [self.ssh_path, ]
         if self.debug:
             cmd += ['-vvvv']
         if self.login:
@@ -358,7 +361,7 @@ class SSHConnection(object):
 
         Include target(s) if specified. Internal function
         """
-        cmd = ['/usr/bin/scp', self.debug and '-vvvv' or '-q', '-r']
+        cmd = [self.scp_path, self.debug and '-vvvv' or '-q', '-r']
         files = b_list(files)
         if self.login:
             remotename = '%s@%s' % (u(self.login), u(self.server))
