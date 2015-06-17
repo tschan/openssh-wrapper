@@ -73,7 +73,7 @@ class SSHConnection(object):
     """
 
     def __init__(self, server, login=None, port=None, configfile=None,
-                 identity_file=None, ssh_agent_socket=None, timeout=60, debug=False,
+                 identity_file=None, ssh_agent_socket=None, strict_hostkey_checking=True, timeout=60, debug=False,
                  ssh_path='/usr/bin/ssh', scp_path='/usr/bin/scp'):
         """
         Create new object to establish SSH connection to remote servers
@@ -101,6 +101,7 @@ class SSHConnection(object):
         self.timeout = timeout
         self.check_server(server)
         self.user = getpass.getuser()
+        self.strict_hostkey_checking = strict_hostkey_checking
         self.debug = debug
         self.ssh_path = ssh_path
         self.scp_path = scp_path
@@ -351,6 +352,8 @@ class SSHConnection(object):
             cmd.append('-A')
         if self.port:
             cmd += ['-p', str(self.port)]
+        if not self.strict_hostkey_checking:
+            cmd += ['-o', 'StrictHostKeyChecking=no']
         cmd.append(self.server)
         cmd.append(interpreter)
         return b_list(cmd)
@@ -373,6 +376,8 @@ class SSHConnection(object):
             cmd += ['-i', self.identity_file]
         if self.port:
             cmd += ['-P', self.port]
+        if not self.strict_hostkey_checking:
+            cmd += ['-o', 'StrictHostKeyChecking=no']
 
         if isinstance(files, (text, bytes)):
             raise ValueError('"files" argument have to be iterable (list or tuple)')
